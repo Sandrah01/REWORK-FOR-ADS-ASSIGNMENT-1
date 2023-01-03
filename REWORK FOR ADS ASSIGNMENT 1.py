@@ -56,40 +56,46 @@ title = 'A line plot of Item_Weight, Item_Visibility, Item_MRP and Item_Outlet_S
 line_plot(x_axis,my_list,xticks,label,title)   
 
 
-#sum value based on item weight, visibity, mrp and outlet sales
-item = [data_BM['Item_Weight'].sum(), data_BM['Item_Visibility'].sum(), data_BM['Item_MRP'].sum() ,data_BM ['Item_Outlet_Sales'].sum()]
-item_df = pd.DataFrame(item, ['Item_Weight', 'Item_Visibility', 'Item_MRP', 'Item_Outlet_Sales'], columns=['Sum'])
-print(item_df)
-    
-def bar_chart(x_axis, list,title):
+# sales by outlet size
+sales_by_outlet_size = data_BM.groupby('Outlet_Size').Item_Outlet_Sales.sum()
+print(sales_by_outlet_size)
+
+def bar_chart(x_axis,my_list,title):
       
     '''
     Data:This function defines box plot, below are the attributes;
     Args:
         x_axis: this uses preferred columns to state the index
         title:  shows the title of the plot
-        labels: these are the labels of each bar plot 
      Returns:
         None
     
     '''
     plt.figure(figsize=(12,8))
-    plt.bar(x_axis,list)
-    plt.title(title, fontsize= 15)
+    plt.bar(x_axis, list, color = ['red', 'orange', 'magenta'])
+   
+    # sort by sales
+    sales_by_outlet_size.sort_values(inplace=True)
+
+    # set axis labels
+    plt.xlabel('Outlet Size')
+    plt.ylabel('Sales')
+
+    # set title
+    plt.title('Total sales for each outlet type')
+
     plt.show()
     return
 
 # parameters for plotting bar plot
-x_axis = item_df.index
-my_list = item_df['Sum']
-title = 'A Bar Chart showing the total Item_Weight, Visibility, MRP and Outlet_Sales'
-
-bar_chart(x_axis,my_list,title)
+x_axis = sales_by_outlet_size.index.tolist()
+list = sales_by_outlet_size.values.tolist() 
+title = 'Mean sales for each outlet type'
 
 
-# sum of sales based on outlet size
-sales_by_outlet_size = data_BM.groupby('Outlet_Size')[['Item_Weight', 'Item_Visibility', 'Item_MRP','Item_Outlet_Sales']].sum()
-print(sales_by_outlet_size)
+bar_chart(x_axis, my_list, title)
+
+
     
     
 def box_plot(x_axis,label,title):
